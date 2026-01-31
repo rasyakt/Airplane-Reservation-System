@@ -112,11 +112,16 @@ class BookingController extends Controller
                 ]);
             });
 
-            $booking = Booking::with(['client', 'flight.schedule', 'seat.travelClass'])
+            $booking = Booking::with(['client', 'flight.schedule.originAirport', 'flight.schedule.destinationAirport', 'seat.travelClass'])
                 ->where('client_id', $validated['client_id'])
                 ->where('flight_call', $validated['flight_call'])
                 ->where('seat_id', $validated['seat_id'])
                 ->first();
+
+            // Send confirmation email
+            if ($booking && $booking->client->email) {
+                \Illuminate\Support\Facades\Mail::to($booking->client->email)->send(new \App\Mail\BookingConfirmation($booking));
+            }
 
             return redirect()->route('bookings.confirmation', $booking->confirmation_code)
                 ->with('success', 'Booking confirmed successfully!');
