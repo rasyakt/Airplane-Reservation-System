@@ -37,7 +37,14 @@ class Booking extends Model
 
         static::creating(function ($booking) {
             if (empty($booking->confirmation_code)) {
-                $booking->confirmation_code = strtoupper(Str::random(10));
+                $code = strtoupper(Str::random(10));
+
+                // Ensure unique code
+                while (self::where('confirmation_code', $code)->exists()) {
+                    $code = strtoupper(Str::random(10));
+                }
+
+                $booking->confirmation_code = $code;
             }
         });
     }

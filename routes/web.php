@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AircraftController;
 use App\Http\Controllers\Admin\AircraftManufacturerController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Admin\FlightController;
+use App\Http\Controllers\Admin\FlightSeatPriceController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -25,9 +26,9 @@ Route::post('/clients/check-email', [ClientController::class, 'checkEmail'])->na
 Route::post('/bookings/confirm', [BookingController::class, 'confirm'])->name('bookings.confirm');
 
 // Authenticated routes
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     // Profile routes
@@ -42,6 +43,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('manufacturers', AircraftManufacturerController::class);
         Route::resource('schedules', ScheduleController::class);
         Route::resource('flights', FlightController::class);
+        Route::get('prices', [FlightSeatPriceController::class, 'index'])->name('prices.index');
+        Route::get('prices/{flight}/edit', [FlightSeatPriceController::class, 'edit'])->name('prices.edit');
+        Route::put('prices/{flight}', [FlightSeatPriceController::class, 'update'])->name('prices.update');
+        Route::resource('bookings', \App\Http\Controllers\Admin\AdminBookingController::class)->only(['index', 'show', 'destroy']);
     });
 });
 

@@ -59,10 +59,28 @@
                         <span>Schedules</span>
                     </a>
 
+                    <a href="{{ route('admin.prices.index') }}"
+                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-lg transition {{ request()->routeIs('admin.prices.*') ? 'bg-primary-50 text-primary-600 font-semibold' : '' }}">
+                        <i class="fas fa-tags w-5"></i>
+                        <span>Pricing</span>
+                    </a>
+
                     <a href="{{ route('admin.flights.index') }}"
                         class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-lg transition {{ request()->routeIs('admin.flights.*') ? 'bg-primary-50 text-primary-600 font-semibold' : '' }}">
                         <i class="fas fa-plane-departure w-5"></i>
                         <span>Flights</span>
+                    </a>
+
+                    <a href="{{ route('admin.manufacturers.index') }}"
+                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-lg transition {{ request()->routeIs('admin.manufacturers.*') ? 'bg-primary-50 text-primary-600 font-semibold' : '' }}">
+                        <i class="fas fa-industry w-5"></i>
+                        <span>Manufacturers</span>
+                    </a>
+
+                    <a href="{{ route('admin.bookings.index') }}"
+                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-lg transition {{ request()->routeIs('admin.bookings.*') ? 'bg-primary-50 text-primary-600 font-semibold' : '' }}">
+                        <i class="fas fa-ticket-alt w-5"></i>
+                        <span>Bookings</span>
                     </a>
 
                     <div class="pt-4 pb-2 px-4">

@@ -165,7 +165,8 @@
                                 <div class="text-center md:text-right md:pl-8 md:border-l border-gray-200">
                                     <div class="mb-4">
                                         <div class="text-sm text-gray-500 mb-1">Starting from</div>
-                                        <div class="text-3xl font-bold text-primary-600">$199</div>
+                                        <div class="text-3xl font-bold text-primary-600">
+                                            ${{ number_format($flight->min_price, 0) }}</div>
                                         <div class="text-xs text-gray-500">/person</div>
                                     </div>
                                     <a href="{{ route('flights.show', $flight->flight_call) }}" class="btn-primary w-full">

@@ -32,16 +32,21 @@ class BookingController extends Controller
             'departure_date' => 'required|date|after_or_equal:today',
         ]);
 
-        $flights = Flight::with(['schedule.originAirport', 'schedule.destinationAirport', 'status'])
+        $flights = Flight::with(['schedule.originAirport', 'schedule.destinationAirport', 'status', 'flightSeatPrices'])
             ->whereHas('schedule', function ($query) use ($validated) {
                 $query->where('origin_iata_airport_code', $validated['origin'])
                     ->where('dest_iata_airport_code', $validated['destination'])
+                    ->where('departure_time_gmt', '>', now()) // Only future flights
                     ->whereDate('departure_time_gmt', $validated['departure_date']);
             })
             ->whereHas('status', function ($query) {
                 $query->whereIn('name', ['Scheduled', 'Boarding']);
             })
-            ->get();
+            ->get()
+            ->map(function ($flight) {
+                $flight->min_price = $flight->flightSeatPrices->min('price_usd') ?? 0;
+                return $flight;
+            });
 
         $searchParams = $validated;
         return view('bookings.search', compact('flights', 'searchParams'));

@@ -140,9 +140,36 @@
     </div>
 
     <!-- Features Section -->
-    <div class="bg-gray-50 py-16">
+    <section class="py-20 bg-white">
         <div class="container mx-auto px-6">
-            <div class="text-center mb-12">
+            <div class="grid md:grid-cols-2 gap-12 items-center mb-20">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Track Your Booking</h2>
+                    <p class="text-gray-600 mb-6">Already have a reservation? Enter your confirmation code to view your
+                        flight details and download your boarding pass.</p>
+                    <form action="#" method="GET" class="flex gap-2"
+                        onsubmit="event.preventDefault(); window.location.href='/bookings/confirmation/' + this.code.value;">
+                        <input type="text" name="code" placeholder="Enter Confirmation Code (e.g. ABC123XYZ)"
+                            class="input flex-1" required>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-search mr-2"></i>Track
+                        </button>
+                    </form>
+                </div>
+                <div class="bg-primary-50 p-8 rounded-3xl border-2 border-primary-100">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div
+                            class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary-600 shadow-soft">
+                            <i class="fas fa-info-circle text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-gray-900">Where to find your code?</h3>
+                    </div>
+                    <p class="text-sm text-gray-600">Your 10-character confirmation code was sent to your email address
+                        and displayed on the confirmation page after you completed your booking.</p>
+                </div>
+            </div>
+
+            <div class="text-center max-w-3xl mx-auto mb-16">
                 <h3 class="text-3xl font-bold text-gray-900 mb-3">Why Choose Us?</h3>
                 <p class="text-gray-600">The best flight booking experience</p>
             </div>
@@ -174,56 +201,56 @@
                 </div>
             </div>
         </div>
-    </div>
+        </div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-12">
-        <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-4 gap-8 mb-8">
-                <div>
-                    <h5 class="text-white font-semibold mb-4">About Us</h5>
-                    <p class="text-sm">Your trusted partner for flight bookings worldwide. We make travel easy and
-                        affordable.</p>
-                </div>
-                <div>
-                    <h5 class="text-white font-semibold mb-4">Quick Links</h5>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white">About</a></li>
-                        <li><a href="#" class="hover:text-white">Contact</a></li>
-                        <li><a href="#" class="hover:text-white">Careers</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h5 class="text-white font-semibold mb-4">Support</h5>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white">Help Center</a></li>
-                        <li><a href="#" class="hover:text-white">Terms of Service</a></li>
-                        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h5 class="text-white font-semibold mb-4">Follow Us</h5>
-                    <div class="flex gap-3">
-                        <a href="#"
-                            class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary-600 transition">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary-600 transition">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary-600 transition">
-                            <i class="fab fa-instagram"></i>
-                        </a>
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-gray-300 py-12">
+            <div class="container mx-auto px-6">
+                <div class="grid md:grid-cols-4 gap-8 mb-8">
+                    <div>
+                        <h5 class="text-white font-semibold mb-4">About Us</h5>
+                        <p class="text-sm">Your trusted partner for flight bookings worldwide. We make travel easy and
+                            affordable.</p>
+                    </div>
+                    <div>
+                        <h5 class="text-white font-semibold mb-4">Quick Links</h5>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-white">About</a></li>
+                            <li><a href="#" class="hover:text-white">Contact</a></li>
+                            <li><a href="#" class="hover:text-white">Careers</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="text-white font-semibold mb-4">Support</h5>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="#" class="hover:text-white">Help Center</a></li>
+                            <li><a href="#" class="hover:text-white">Terms of Service</a></li>
+                            <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="text-white font-semibold mb-4">Follow Us</h5>
+                        <div class="flex gap-3">
+                            <a href="#"
+                                class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary-600 transition">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#"
+                                class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary-600 transition">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#"
+                                class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary-600 transition">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
+                <div class="border-t border-gray-800 pt-8 text-center text-sm">
+                    <p>&copy; {{ date('Y') }} AirlineBooking. All rights reserved.</p>
+                </div>
             </div>
-            <div class="border-t border-gray-800 pt-8 text-center text-sm">
-                <p>&copy; {{ date('Y') }} AirlineBooking. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+        </footer>
 </body>
 
 </html>
