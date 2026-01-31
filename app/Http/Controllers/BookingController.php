@@ -91,7 +91,7 @@ class BookingController extends Controller
         ]);
 
         try {
-            DB::transaction(function () use ($validated) {
+            $booking = DB::transaction(function () use ($validated) {
                 // Lock the seat to prevent double booking
                 $seat = AircraftSeat::lockForUpdate()
                     ->where('seat_id', $validated['seat_id'])
@@ -103,7 +103,7 @@ class BookingController extends Controller
                 }
 
                 // Create booking
-                Booking::create([
+                return Booking::create([
                     'client_id' => $validated['client_id'],
                     'flight_call' => $validated['flight_call'],
                     'aircraft_id' => $validated['aircraft_id'],
@@ -118,17 +118,54 @@ class BookingController extends Controller
                 ->where('seat_id', $validated['seat_id'])
                 ->first();
 
-            // Send confirmation email
-            if ($booking && $booking->client->email) {
-                \Illuminate\Support\Facades\Mail::to($booking->client->email)->send(new \App\Mail\BookingConfirmation($booking));
-            }
-
-            return redirect()->route('bookings.confirmation', $booking->confirmation_code)
-                ->with('success', 'Booking confirmed successfully!');
+            // Redirect to payment page
+            return redirect()->route('bookings.payment', $booking->confirmation_code);
 
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+    }
+
+    /**
+     * Show dummy payment page
+     */
+    public function payment($confirmationCode)
+    {
+        $booking = Booking::with(['client', 'flight.schedule', 'seat.travelClass', 'seat.flightSeatPrices'])
+            ->where('confirmation_code', $confirmationCode)
+            ->firstOrFail();
+
+        return view('bookings.payment', compact('booking'));
+    }
+
+    /**
+     * Process dummy payment
+     */
+    public function processPayment(Request $request, $confirmationCode)
+    {
+        $booking = Booking::with(['client', 'flight.schedule.originAirport', 'flight.schedule.destinationAirport', 'seat.travelClass'])
+            ->where('confirmation_code', $confirmationCode)
+            ->firstOrFail();
+
+        // Simulate payment success
+        // Use composite keys via DB facade since Eloquent primary key is null
+        DB::table('bookings')
+            ->where('client_id', $booking->client_id)
+            ->where('flight_call', $booking->flight_call)
+            ->where('aircraft_id', $booking->aircraft_id)
+            ->where('seat_id', $booking->seat_id)
+            ->update(['payment_status' => 'completed', 'updated_at' => now()]);
+
+        // Reload booking to get the updated status for the mail
+        $booking->payment_status = 'completed';
+
+        // Send confirmation email NOW after payment
+        if ($booking->client->email) {
+            \Illuminate\Support\Facades\Mail::to($booking->client->email)->send(new \App\Mail\BookingConfirmation($booking));
+        }
+
+        return redirect()->route('bookings.confirmation', $booking->confirmation_code)
+            ->with('success', 'Payment successful and booking confirmed!');
     }
 
     /**

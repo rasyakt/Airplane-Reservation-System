@@ -15,15 +15,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [BookingController::class, 'index'])->name('home');
 Route::get('/flights/search', [BookingController::class, 'search'])->name('flights.search');
 Route::get('/flights/{flight}', [BookingController::class, 'show'])->name('flights.show');
-Route::get('/bookings/confirmation/{confirmationCode}', [BookingController::class, 'confirmation'])->name('bookings.confirmation');
-
-// Client registration routes
-Route::get('/clients/create', [ClientController::class, 'create'])->name('clients.create');
-Route::post('/clients', [ClientController::class, 'register'])->name('clients.register');
-Route::post('/clients/check-email', [ClientController::class, 'checkEmail'])->name('clients.check-email');
-
-// Booking confirmation
+// Booking routes
 Route::post('/bookings/confirm', [BookingController::class, 'confirm'])->name('bookings.confirm');
+Route::get('/bookings/payment/{confirmationCode}', [BookingController::class, 'payment'])->name('bookings.payment');
+Route::post('/bookings/payment/{confirmationCode}', [BookingController::class, 'processPayment'])->name('bookings.payment.process');
+Route::get('/bookings/confirmation/{confirmationCode}', [BookingController::class, 'confirmation'])->name('bookings.confirmation');
 
 // Authenticated routes
 Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
