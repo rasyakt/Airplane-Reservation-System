@@ -53,18 +53,19 @@
                     @forelse ($manufacturers as $manufacturer)
                         <tr>
                             <td>
-                                <span class="badge-primary">#{{ $manufacturer->manufacturer_id }}</span>
+                                <span class="badge-primary">#{{ $manufacturer->aircraft_manufacturer_id }}</span>
                             </td>
                             <td>
                                 <div class="font-semibold text-gray-900">{{ $manufacturer->name }}</div>
                             </td>
                             <td class="text-right">
                                 <div class="flex justify-end gap-2">
-                                    <a href="{{ route('admin.manufacturers.edit', $manufacturer->manufacturer_id) }}"
+                                    <a href="{{ route('admin.manufacturers.edit', $manufacturer->aircraft_manufacturer_id) }}"
                                         class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition text-sm font-medium">
                                         <i class="fas fa-edit mr-1"></i>Edit
                                     </a>
-                                    <form action="{{ route('admin.manufacturers.destroy', $manufacturer->manufacturer_id) }}"
+                                    <form
+                                        action="{{ route('admin.manufacturers.destroy', $manufacturer->aircraft_manufacturer_id) }}"
                                         method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')

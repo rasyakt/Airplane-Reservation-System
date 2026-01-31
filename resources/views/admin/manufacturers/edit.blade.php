@@ -9,7 +9,8 @@
                 <i class="fas fa-edit text-primary-500 mr-2"></i>Edit Manufacturer: {{ $manufacturer->name }}
             </div>
             <div class="card-body">
-                <form action="{{ route('admin.manufacturers.update', $manufacturer->manufacturer_id) }}" method="POST">
+                <form action="{{ route('admin.manufacturers.update', $manufacturer->aircraft_manufacturer_id) }}"
+                    method="POST">
                     @csrf
                     @method('PUT')
 
