@@ -19,10 +19,14 @@ class FlightAircraftInstance extends Model
         'aircraft_instance_id',
     ];
 
-    // Override getKeyName for composite key
-    public function getKeyName()
+    /**
+     * Set the keys for a save update query.
+     */
+    protected function setKeysForSaveQuery($query)
     {
-        return ['flight_call', 'aircraft_instance_id'];
+        $query->where('flight_call', '=', $this->getAttribute('flight_call'))
+            ->where('aircraft_instance_id', '=', $this->getAttribute('aircraft_instance_id'));
+        return $query;
     }
 
     // Relationships

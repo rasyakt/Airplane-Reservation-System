@@ -20,10 +20,14 @@ class Direction extends Model
         'dest_iata_airport_code',
     ];
 
-    // Override getKeyName for composite key
-    public function getKeyName()
+    /**
+     * Set the keys for a save update query.
+     */
+    protected function setKeysForSaveQuery($query)
     {
-        return ['origin_iata_airport_code', 'dest_iata_airport_code'];
+        $query->where('origin_iata_airport_code', '=', $this->getAttribute('origin_iata_airport_code'))
+            ->where('dest_iata_airport_code', '=', $this->getAttribute('dest_iata_airport_code'));
+        return $query;
     }
 
     // Relationships

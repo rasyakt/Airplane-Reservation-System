@@ -24,10 +24,19 @@ class Booking extends Model
         'payment_status',
     ];
 
-    // Override getKeyName for composite key
-    public function getKeyName()
+    /**
+     * Set the keys for a save update query.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    protected function setKeysForSaveQuery($query)
     {
-        return ['client_id', 'flight_call', 'aircraft_id', 'seat_id'];
+        $keys = ['client_id', 'flight_call', 'aircraft_id', 'seat_id'];
+        foreach ($keys as $key) {
+            $query->where($key, '=', $this->getAttribute($key));
+        }
+        return $query;
     }
 
     // Automatically generate confirmation code

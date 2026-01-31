@@ -25,10 +25,16 @@ class FlightSeatPrice extends Model
         'price_usd' => 'decimal:2',
     ];
 
-    // Override getKeyName for composite key
-    public function getKeyName()
+    /**
+     * Set the keys for a save update query.
+     */
+    protected function setKeysForSaveQuery($query)
     {
-        return ['flight_call', 'aircraft_id', 'seat_id'];
+        $keys = ['flight_call', 'aircraft_id', 'seat_id'];
+        foreach ($keys as $key) {
+            $query->where($key, '=', $this->getAttribute($key));
+        }
+        return $query;
     }
 
     // Relationships
