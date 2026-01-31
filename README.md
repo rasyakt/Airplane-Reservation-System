@@ -1,59 +1,244 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Airplane Reservation System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Production-ready airplane booking system built with Laravel 12, PostgreSQL, and Tailwind CSS.
 
-## About Laravel
+## 🚀 Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Public Booking Interface
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- ✈️ **Flight Search** - Search flights by origin, destination, and date
+- 💺 **Seat Selection** - Interactive seat selection with travel class grouping
+- 👤 **Client Registration** - Secure passenger information collection
+- ✅ **Booking Confirmation** - Detailed confirmation with unique codes
+- 🔒 **Anti-Double Booking** - Database-level constraints + pessimistic locking
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Admin Panel
 
-## Learning Laravel
+- 🛫 **Airport Management** - CRUD operations with IATA code validation
+- ✈️ **Aircraft Management** - Manage aircraft models and manufacturers
+- 📅 **Schedule Management** - Define flight routes and times
+- 🎫 **Flight Management** - Monitor and update flight statuses
+- 🔐 **Authentication** - Laravel Breeze with secure login
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 📋 Requirements
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP 8.2+
+- PostgreSQL 13+
+- Composer
+- Node.js & NPM
 
-## Laravel Sponsors
+## 🛠️ Installation
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+# Clone repository
+git clone <your-repo-url>
+cd Airplane
 
-### Premium Partners
+# Install dependencies
+composer install
+npm install
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Configure environment
+cp .env.example .env
+php artisan key:generate
 
-## Contributing
+# Configure database in .env
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=airplane
+DB_USERNAME=root
+DB_PASSWORD=
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Create database (via pgAdmin or command line)
+# Then run migrations
+php artisan migrate:fresh --seed
 
-## Code of Conduct
+# Build assets
+npm run build
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Start server
+php artisan serve
+```
 
-## Security Vulnerabilities
+## 🎯 Default Login
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Admin Account:**
 
-## License
+- Email: `admin@airplane.com`
+- Password: Set during first login
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📊 Database Schema
+
+### Core Tables
+
+- **countries** - IATA country codes
+- **airports** - Airport information with IATA codes
+- **aircraft_manufacturers** - Boeing, Airbus, etc.
+- **aircraft** - Aircraft models
+- **travel_classes** - Economy, Business, First Class
+- **flight_statuses** - Scheduled, Delayed, Cancelled, etc.
+
+### Operational Tables
+
+- **schedules** - Flight routes and times
+- **flights** - Specific flight instances
+- **aircraft_instances** - Individual aircraft units
+- **aircraft_seats** - Seat configurations
+
+### Booking Tables
+
+- **clients** - Passenger information
+- **flight_seat_prices** - Dynamic pricing per flight
+- **bookings** - Confirmed reservations
+
+## 🔐 Security Features
+
+- ✅ CSRF Protection
+- ✅ SQL Injection Prevention (Eloquent ORM)
+- ✅ XSS Protection (Blade templating)
+- ✅ Password Hashing (Bcrypt)
+- ✅ Email Validation
+- ✅ Unique Constraints
+- ✅ Database Transactions
+
+## 🎨 UI/UX Features
+
+- 🌙 Dark Mode Theme
+- 📱 Fully Responsive Design
+- 🎭 Professional Gradient Buttons
+- ⚡ Real-time Form Validation
+- 💬 Flash Messages
+- 🔄 Loading States
+- 📄 Pagination
+
+## 📝 API Endpoints
+
+### Public Routes
+
+```
+GET  /                          - Homepage with search
+GET  /flights/search            - Search results
+GET  /flights/{flight}          - Flight details & seat selection
+POST /clients                   - Register client
+POST /bookings/confirm          - Confirm booking
+GET  /bookings/confirmation/{code} - Confirmation page
+```
+
+### Admin Routes (Auth Required)
+
+```
+GET  /admin/airports            - List airports
+GET  /admin/aircraft            - List aircraft
+GET  /admin/schedules           - List schedules
+GET  /admin/flights             - List flights
+```
+
+## 🚀 Deployment
+
+### Production Checklist
+
+1. **Environment Configuration**
+
+```bash
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://yourdomain.com
+```
+
+2. **Optimize Performance**
+
+```bash
+composer install --optimize-autoloader --no-dev
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+npm run build
+```
+
+3. **Database**
+
+```bash
+php artisan migrate --force
+php artisan db:seed --force
+```
+
+4. **Security**
+
+- Set strong `APP_KEY`
+- Configure HTTPS
+- Set up database backups
+- Enable rate limiting
+- Configure CORS if needed
+
+5. **Server Requirements**
+
+- PHP-FPM with Nginx/Apache
+- PostgreSQL server
+- SSL certificate
+- Min 512MB RAM
+
+### Recommended Hosting
+
+- **VPS**: DigitalOcean, Linode, AWS EC2
+- **Shared**: Laravel Forge, Ploi
+- **Platform**: Laravel Cloud, Heroku
+
+## 📈 Performance
+
+- Database indexing on foreign keys
+- Eager loading relationships
+- Query optimization
+- Asset minification
+- Gzip compression
+
+## 🧪 Testing
+
+```bash
+# Run tests
+php artisan test
+
+# Code quality
+./vendor/bin/phpstan analyse
+
+# Code style
+./vendor/bin/pint
+```
+
+## 📦 Tech Stack
+
+- **Backend**: Laravel 12
+- **Database**: PostgreSQL
+- **Frontend**: Blade + Tailwind CSS
+- **Build**: Vite
+- **Authentication**: Laravel Breeze
+- **ORM**: Eloquent
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+## 📄 License
+
+This project is open-source software licensed under the MIT license.
+
+## 👨‍💻 Support
+
+For issues and questions:
+
+- Create an issue on GitHub
+- Contact: your-email@example.com
+
+## 🎉 Acknowledgments
+
+- Laravel Framework
+- Tailwind CSS
+- PostgreSQL Community
+
+---
+
+**Built with ❤️ for the aviation industry**
