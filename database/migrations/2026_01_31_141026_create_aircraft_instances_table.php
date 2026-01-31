@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('aircraft_instances', function (Blueprint $table) {
             $table->id('aircraft_instance_id');
             $table->unsignedBigInteger('aircraft_id');
+            $table->string('registration_number')->unique();
             $table->timestamps();
 
             $table->foreign('aircraft_id')

@@ -12,8 +12,11 @@ class Flight extends Model
 
     protected $table = 'flights';
     protected $primaryKey = 'flight_call';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
+        'flight_call',
         'schedule_id',
         'flight_status_id',
     ];

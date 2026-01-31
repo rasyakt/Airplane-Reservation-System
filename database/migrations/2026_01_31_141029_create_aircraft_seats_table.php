@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('aircraft_seats', function (Blueprint $table) {
             $table->id('seat_id');
             $table->unsignedBigInteger('aircraft_id');
+            $table->string('seat_number');
             $table->unsignedBigInteger('travel_class_id');
             $table->timestamps();
 

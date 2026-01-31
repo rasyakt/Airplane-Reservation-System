@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('flight_seat_prices', function (Blueprint $table) {
-            $table->unsignedBigInteger('flight_call');
+            $table->string('flight_call');
             $table->unsignedBigInteger('aircraft_id');
             $table->unsignedBigInteger('seat_id');
             $table->decimal('price_usd', 10, 2);

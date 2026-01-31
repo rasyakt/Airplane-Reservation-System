@@ -15,6 +15,7 @@ class AircraftInstance extends Model
 
     protected $fillable = [
         'aircraft_id',
+        'registration_number',
     ];
 
     // Relationships

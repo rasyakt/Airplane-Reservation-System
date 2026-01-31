@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->char('dest_iata_airport_code', 3);
             $table->timestamp('departure_time_gmt');
             $table->timestamp('arrival_time_gmt');
+            $table->string('callsign');
             $table->timestamps();
 
             $table->foreign('origin_iata_airport_code')

@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('flights', function (Blueprint $table) {
-            $table->id('flight_call');
+            $table->string('flight_call')->primary();
             $table->unsignedBigInteger('schedule_id');
             $table->unsignedBigInteger('flight_status_id');
             $table->timestamps();

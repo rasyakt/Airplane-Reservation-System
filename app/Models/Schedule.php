@@ -18,6 +18,7 @@ class Schedule extends Model
         'dest_iata_airport_code',
         'departure_time_gmt',
         'arrival_time_gmt',
+        'callsign',
     ];
 
     protected $casts = [

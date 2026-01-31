@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             AircraftManufacturerSeeder::class,
             TravelClassSeeder::class,
             FlightStatusSeeder::class,
+            FlightDataSeeder::class,
         ]);
 
         // Create default admin user for testing
