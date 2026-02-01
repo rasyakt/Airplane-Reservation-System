@@ -21,6 +21,11 @@ Route::get('/bookings/payment/{confirmationCode}', [BookingController::class, 'p
 Route::post('/bookings/payment/{confirmationCode}', [BookingController::class, 'processPayment'])->name('bookings.payment.process');
 Route::get('/bookings/confirmation/{confirmationCode}', [BookingController::class, 'confirmation'])->name('bookings.confirmation');
 
+// Client registration routes
+Route::get('/clients/create', [ClientController::class, 'create'])->name('clients.create');
+Route::post('/clients', [ClientController::class, 'register'])->name('clients.register');
+Route::post('/clients/check-email', [ClientController::class, 'checkEmail'])->name('clients.check-email');
+
 // Authenticated routes
 Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
