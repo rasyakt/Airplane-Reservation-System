@@ -243,6 +243,19 @@
                 <a href="{{ route('home') }}" class="btn-primary">
                     <i class="fas fa-home"></i>Back to Home
                 </a>
+
+                @if($booking->payment_status === 'pending')
+                    <div class="md:col-span-2 mt-4 flex justify-center">
+                        <form action="{{ route('bookings.cancel', $booking->confirmation_code) }}" method="POST"
+                            onsubmit="return confirm('Are you sure you want to cancel this booking? This action cannot be undone.');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-600 hover:text-red-800 font-semibold underline text-sm">
+                                <i class="fas fa-times-circle mr-1"></i>Cancel Booking
+                            </button>
+                        </form>
+                    </div>
+                @endif
             </div>
         </div>
     </div>

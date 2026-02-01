@@ -21,6 +21,7 @@ Route::post('/bookings/confirm', [BookingController::class, 'confirm'])->name('b
 Route::get('/bookings/payment/{confirmationCode}', [BookingController::class, 'payment'])->name('bookings.payment');
 Route::post('/bookings/payment/{confirmationCode}', [BookingController::class, 'processPayment'])->name('bookings.payment.process');
 Route::get('/bookings/confirmation/{confirmationCode}', [BookingController::class, 'confirmation'])->name('bookings.confirmation');
+Route::delete('/bookings/cancel/{confirmationCode}', [BookingController::class, 'cancel'])->name('bookings.cancel');
 
 // Client registration routes
 Route::get('/clients/create', [ClientController::class, 'create'])->name('clients.create');

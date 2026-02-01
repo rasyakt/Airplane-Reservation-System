@@ -255,4 +255,26 @@ class BookingController extends Controller
 
         return view('bookings.confirmation', compact('booking'));
     }
+
+    /**
+     * Cancel a booking (Only if pending)
+     */
+    public function cancel($confirmationCode)
+    {
+        $booking = Booking::where('confirmation_code', $confirmationCode)->firstOrFail();
+
+        if ($booking->payment_status === 'completed') {
+            return back()->with('error', 'Cannot cancel a completed booking. Please contact support.');
+        }
+
+        // Delete using composite keys
+        DB::table('bookings')
+            ->where('client_id', $booking->client_id)
+            ->where('flight_call', $booking->flight_call)
+            ->where('aircraft_id', $booking->aircraft_id)
+            ->where('seat_id', $booking->seat_id)
+            ->delete();
+
+        return redirect()->route('home')->with('success', 'Booking cancelled successfully.');
+    }
 }

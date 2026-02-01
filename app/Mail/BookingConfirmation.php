@@ -13,7 +13,7 @@ use App\Models\Booking;
 
 class BookingConfirmation extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
 
     public $booking;
 
