@@ -29,9 +29,9 @@ Route::post('/clients', [ClientController::class, 'register'])->name('clients.re
 Route::post('/clients/check-email', [ClientController::class, 'checkEmail'])->name('clients.check-email');
 
 // Authenticated routes
-Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     // Profile routes
@@ -41,6 +41,7 @@ Route::middleware('auth')->group(function () {
 
     // Admin routes
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
         Route::resource('airports', AirportController::class);
         Route::resource('aircraft', AircraftController::class);
         Route::resource('manufacturers', AircraftManufacturerController::class);
