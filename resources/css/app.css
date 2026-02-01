@@ -120,6 +120,90 @@
     .table tr:hover {
         @apply bg-gray-50 transition-colors;
     }
+
+    /* Seat Map Styles */
+    .plane-fuselage {
+        @apply bg-white border-2 border-gray-100 rounded-t-[16rem] pt-32 pb-12 relative mx-auto max-w-md shadow-2xl;
+        min-height: 700px;
+        /* Add subtle gradient for cylinder effect */
+        background: linear-gradient(90deg, #f9fafb 0%, #ffffff 10%, #ffffff 90%, #f9fafb 100%);
+    }
+
+    /* Cockpit / Nose Cone */
+    .cockpit {
+        @apply absolute -top-32 left-1/2 transform -translate-x-1/2 w-full h-48 z-0;
+        /* Clip path for aerodynamic nose shape */
+        clip-path: ellipse(50% 100% at 50% 100%);
+        background: linear-gradient(180deg, #f3f4f6 0%, #ffffff 100%);
+        box-shadow: inset 0 -10px 20px rgba(0,0,0,0.02);
+    }
+    
+    /* Cockpit Window Glint */
+    .cockpit::after {
+        content: '';
+        @apply absolute bottom-8 left-1/2 transform -translate-x-1/2 w-48 h-16 bg-gradient-to-b from-blue-100 to-transparent rounded-full opacity-30;
+    }
+    
+    /* Front Landing Gear Hint (Optional decorative) */
+    .cockpit::before {
+        content: '';
+        @apply absolute bottom-32 left-1/2 transform -translate-x-1/2 w-2 h-12 bg-gray-200 opacity-20;
+    }
+
+    .cabin {
+        @apply relative z-10 space-y-4;
+    }
+
+    .seat-row {
+        @apply flex items-center justify-between gap-4;
+    }
+
+    .seat-group {
+        @apply flex gap-2;
+    }
+
+    .seat {
+        @apply w-10 h-10 rounded-t-lg rounded-b-md flex items-center justify-center text-xs font-bold transition-all duration-200 cursor-pointer border relative;
+    }
+    
+    .seat::after {
+        content: '';
+        @apply absolute -bottom-1 left-1 right-1 h-1 bg-current opacity-50 rounded-b-sm;
+    }
+
+    /* Seat States */
+    .seat-available {
+        @apply bg-white border-gray-300 text-gray-500 hover:bg-primary-50 hover:border-primary-500 hover:text-primary-600;
+    }
+
+    .seat-selected {
+        @apply bg-primary-500 border-primary-600 text-white shadow-lg transform scale-110 ring-2 ring-primary-200;
+    }
+
+    .seat-booked {
+        @apply bg-gray-200 border-gray-200 text-gray-400 cursor-not-allowed;
+    }
+    
+    /* Seat Classes */
+    .seat-first {
+        @apply w-12 h-12; /* Larger seats */
+    }
+    
+    .seat-business {
+        @apply w-11 h-11;
+    }
+
+    .aisle-number {
+        @apply w-8 text-center text-gray-300 font-mono text-sm;
+    }
+    
+    .wing {
+        @apply absolute top-1/2 -left-16 w-12 h-48 bg-gray-200 rounded-l-full transform -translate-y-1/2 opacity-50;
+    }
+    
+    .wing-right {
+        @apply left-auto -right-16 rounded-l-none rounded-r-full;
+    }
 }
 
 /* Utility Classes */

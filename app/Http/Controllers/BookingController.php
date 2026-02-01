@@ -55,6 +55,9 @@ class BookingController extends Controller
     /**
      * Show flight details and available seats
      */
+    /**
+     * Show flight details and available seats
+     */
     public function show(Flight $flight)
     {
         $flight->load([
@@ -69,13 +72,29 @@ class BookingController extends Controller
             ->pluck('seat_id')
             ->toArray();
 
-        // Get available seats with prices
-        $availableSeats = $flight->flightSeatPrices()
+        // Get ALL seats with prices for the visual map
+        // We'll use this to build the map structure
+        $allSeats = $flight->flightSeatPrices()
             ->with('seat.travelClass')
-            ->whereNotIn('seat_id', $bookedSeats)
-            ->get();
+            ->get()
+            ->map(function ($seatPrice) use ($bookedSeats) {
+                $seatPrice->is_booked = in_array($seatPrice->seat_id, $bookedSeats);
+                // Parse row and column from "1A", "12F" etc
+                // Assuming format like "1A" or "10F"
+                preg_match('/(\d+)([A-Z]+)/', $seatPrice->seat->seat_number, $matches);
+                $seatPrice->row = isset($matches[1]) ? (int) $matches[1] : 0;
+                $seatPrice->col = isset($matches[2]) ? $matches[2] : '';
+                return $seatPrice;
+            })
+            ->sortBy(['row', 'col']);
 
-        return view('bookings.show', compact('flight', 'availableSeats', 'bookedSeats'));
+        // Group by Row for the view
+        $seatMap = $allSeats->groupBy('row');
+
+        // Pass available seats for logic checks if needed, but the map uses $seatMap
+        $availableSeats = $allSeats->where('is_booked', false);
+
+        return view('bookings.show', compact('flight', 'seatMap', 'availableSeats', 'bookedSeats'));
     }
 
     /**
