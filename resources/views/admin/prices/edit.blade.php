@@ -48,9 +48,11 @@
                                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                             <span class="text-gray-500 sm:text-sm">$</span>
                                         </div>
-                                        <input type="number" name="prices[{{ $class->travel_class_id }}]" step="0.01" min="0"
-                                            class="input pl-7" placeholder="0.00"
-                                            value="{{ $existingPrice ? $existingPrice->price_usd : '' }}">
+                                        <input type="text" inputmode="numeric" name="prices[{{ $class->travel_class_id }}]" 
+                                            class="input pl-7" placeholder="0"
+                                            value="{{ $existingPrice ? (int)$existingPrice->price_usd : '' }}"
+                                            onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
+                                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                     </div>
                                 </div>
                             @endforeach

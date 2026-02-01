@@ -93,7 +93,9 @@
                         </div>
                         <div class="input-group">
                             <label class="label">Mobile Number</label>
-                            <input type="tel" class="input" placeholder="+62 812 3456 7890">
+                            <input type="text" inputmode="numeric" class="input" placeholder="81234567890"
+                                onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                         </div>
                     </div>
 
@@ -142,8 +144,10 @@
                                 </div>
                                 <div class="input-group">
                                     <label class="label">Phone Number *</label>
-                                    <input type="tel" name="phone" maxlength="45" class="input"
-                                        placeholder="+1 234 567 8900" required>
+                                    <input type="text" name="phone" maxlength="45" class="input" inputmode="numeric"
+                                        placeholder="12345678900" required
+                                        onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                 </div>
                             </div>
 
@@ -188,7 +192,8 @@
                                 </div>
                                 <div>
                                     <div class="font-semibold text-gray-900">
-                                        {{ $flight->schedule->originAirport->city }}</div>
+                                        {{ $flight->schedule->originAirport->city }}
+                                    </div>
                                     <div class="text-sm text-gray-500">{{ $flight->schedule->originAirport->name }}
                                     </div>
                                     <div class="text-sm font-medium text-primary-600 mt-1">
@@ -208,7 +213,8 @@
                                 </div>
                                 <div>
                                     <div class="font-semibold text-gray-900">
-                                        {{ $flight->schedule->destinationAirport->city }}</div>
+                                        {{ $flight->schedule->destinationAirport->city }}
+                                    </div>
                                     <div class="text-sm text-gray-500">{{ $flight->schedule->destinationAirport->name }}
                                     </div>
                                     <div class="text-sm font-medium text-primary-600 mt-1">
