@@ -80,6 +80,67 @@
                     </div>
                 </div>
 
+                <!-- Payment Details -->
+                <div class="mb-6 px-8">
+                    @php
+                        $total = $booking->total_price ?? ($booking->seat->flightSeatPrices->where('flight_call', $booking->flight_call)->first()->price_usd * 1.11 + 1);
+                        $price = $booking->seat->flightSeatPrices->where('flight_call', $booking->flight_call)->first()->price_usd;
+
+                        // Recalculate if not stored (Legacy support)
+                        if ($booking->tax_amount !== null) {
+                            $vat = $booking->tax_amount;
+                            $rate = ($price > 0) ? round($vat / $price, 2) : 0;
+                        } else {
+                            // Advanced Calculation Fallback
+                            $originCountry = $booking->flight->schedule->originAirport->iata_country_code;
+                            $destCountry = $booking->flight->schedule->destinationAirport->iata_country_code;
+                            $flightDate = $booking->flight->schedule->departure_time_gmt;
+
+                            $isDomestic = ($originCountry == 'ID' && $destCountry == 'ID');
+                            $isInternational = !$isDomestic;
+                            $isDtpPeriod = \Carbon\Carbon::parse($flightDate)->between('2025-10-22', '2026-01-10');
+
+                            $rate = 0.11;
+                            if ($isInternational)
+                                $rate = 0;
+                            elseif ($isDtpPeriod)
+                                $rate = 0.05;
+
+                            $vat = $price * $rate;
+                        }
+
+                        $basePrice = $price;
+                        $vatLabel = "VAT (" . ($rate * 100) . "%)";
+                        if ($rate == 0 && $booking->tax_amount !== null)
+                            $vatLabel = "VAT (Intl. 0%)";
+                        elseif ($rate == 0.05)
+                            $vatLabel = "VAT (DTP 5%)";
+                    @endphp
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-receipt text-primary-500 mr-2"></i>Payment Summary
+                    </h2>
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <div class="space-y-2 border-b border-gray-200 pb-4 mb-4">
+                            <div class="flex justify-between text-sm text-gray-600">
+                                <span>Base Fare</span>
+                                <span>${{ number_format($basePrice, 2) }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm text-gray-600">
+                                <span>{{ $vatLabel }}</span>
+                                <span>${{ number_format($vat, 2) }}</span>
+                            </div>
+                            <div class="flex justify-between text-sm text-gray-600">
+                                <span>App Admin Fee</span>
+                                <span>$1.00</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-gray-900">Total Paid</span>
+                            <span class="text-xl font-bold text-primary-600">${{ number_format($total, 2) }}</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Flight Details -->
                 <div class="mb-6">
                     <h2 class="text-xl font-bold text-gray-900 mb-4">
@@ -89,7 +150,8 @@
                         <div>
                             <div class="text-sm text-gray-500 mb-2">Departure</div>
                             <div class="text-2xl font-bold text-gray-900">
-                                {{ $booking->flight->schedule->originAirport->city }}</div>
+                                {{ $booking->flight->schedule->originAirport->city }}
+                            </div>
                             <div class="text-gray-600 mb-2">{{ $booking->flight->schedule->originAirport->name }}</div>
                             <div class="flex items-center gap-2 text-primary-600 font-semibold">
                                 <i class="far fa-clock"></i>
@@ -100,7 +162,8 @@
                         <div>
                             <div class="text-sm text-gray-500 mb-2">Arrival</div>
                             <div class="text-2xl font-bold text-gray-900">
-                                {{ $booking->flight->schedule->destinationAirport->city }}</div>
+                                {{ $booking->flight->schedule->destinationAirport->city }}
+                            </div>
                             <div class="text-gray-600 mb-2">{{ $booking->flight->schedule->destinationAirport->name }}
                             </div>
                             <div class="flex items-center gap-2 text-primary-600 font-semibold">
@@ -165,7 +228,8 @@
                     <div>
                         <h3 class="font-semibold text-gray-900 mb-2">Confirmation Email Sent</h3>
                         <p class="text-gray-700">A confirmation email with your boarding pass has been sent to
-                            <strong>{{ $booking->client->email }}</strong>. Please check your inbox.</p>
+                            <strong>{{ $booking->client->email }}</strong>. Please check your inbox.
+                        </p>
                     </div>
                 </div>
             </div>

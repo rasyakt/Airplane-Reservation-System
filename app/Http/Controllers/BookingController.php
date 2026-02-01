@@ -102,6 +102,50 @@ class BookingController extends Controller
                     throw new \Exception('Sorry, this seat has just been booked by another passenger.');
                 }
 
+                // Get seat price
+                $seatPrice = FlightSeatPrice::where('flight_call', $validated['flight_call'])
+                    ->where('aircraft_id', $validated['aircraft_id'])
+                    ->where('seat_id', $validated['seat_id'])
+                    ->value('price_usd');
+
+                if (!$seatPrice) {
+                    throw new \Exception('Price not found for this seat.');
+                }
+
+                // Calculate PPN (VAT)
+                // Default: 11% (Domestic)
+                // International: 0%
+                // DTP Period (22 Oct 2025 - 10 Jan 2026): 5%
+
+                // Get Schedule to check route & date
+                $flight = Flight::with('schedule.originAirport', 'schedule.destinationAirport')
+                    ->where('flight_call', $validated['flight_call'])
+                    ->firstOrFail();
+
+                $originCountry = $flight->schedule->originAirport->iata_country_code;
+                $destCountry = $flight->schedule->destinationAirport->iata_country_code;
+
+                $isDomestic = ($originCountry == 'ID' && $destCountry == 'ID');
+                $isInternational = !$isDomestic;
+
+                // Check DTP Period
+                $dtpStart = \Carbon\Carbon::create(2025, 10, 22);
+                $dtpEnd = \Carbon\Carbon::create(2026, 1, 10);
+                $flightDate = $flight->schedule->departure_time_gmt; // Assumed to be cast to Carbon in model, otherwise parse it
+                $isDtpPeriod = \Carbon\Carbon::parse($flightDate)->between($dtpStart, $dtpEnd);
+
+                $taxRate = 0.11; // Default Normal Domestic
+
+                if ($isInternational) {
+                    $taxRate = 0;
+                } elseif ($isDtpPeriod) {
+                    $taxRate = 0.05; // 11% - 6% Gov Support = 5%
+                }
+
+                $vat = $seatPrice * $taxRate;
+                $adminFee = 1.00;
+                $totalPrice = $seatPrice + $vat + $adminFee;
+
                 // Create booking
                 return Booking::create([
                     'client_id' => $validated['client_id'],
@@ -109,6 +153,8 @@ class BookingController extends Controller
                     'aircraft_id' => $validated['aircraft_id'],
                     'seat_id' => $validated['seat_id'],
                     'payment_status' => 'pending',
+                    'total_price' => $totalPrice,
+                    'tax_amount' => $vat,
                 ]);
             });
 

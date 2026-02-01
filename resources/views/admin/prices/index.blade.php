@@ -35,7 +35,7 @@
                                         class="font-semibold">{{ $flight->schedule->destinationAirport->iata_airport_code }}</span>
                                 </div>
                             </td>
-                            <td>{{ $flight->aircraft->model ?? 'N/A' }}</td>
+                            <td>{{ $flight->aircraftInstances->first()?->aircraft->model ?? 'N/A' }}</td>
                             <td>{{ date('M j, Y - H:i', strtotime($flight->schedule->departure_time_gmt)) }}</td>
                             <td class="text-right">
                                 <a href="{{ route('admin.prices.edit', $flight->flight_call) }}"

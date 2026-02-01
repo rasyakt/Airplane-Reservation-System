@@ -40,7 +40,7 @@
                                             </div>
                                         </div>
                                         <div class="text-sm text-gray-500">
-                                            {{ $flight->aircraft->seats->where('travel_class_id', $class->travel_class_id)->count() }}
+                                            {{ $flight->aircraftInstances->first()?->aircraft->seats->where('travel_class_id', $class->travel_class_id)->count() ?? 0 }}
                                             seats
                                         </div>
                                     </div>

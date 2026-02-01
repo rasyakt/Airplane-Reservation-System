@@ -25,15 +25,68 @@
 
         <!-- Payment Card -->
         <div class="card shadow-strong">
-            <div class="flex items-center justify-between mb-8 border-b border-gray-100 pb-6">
-                <div>
-                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Amount</h3>
-                    <div class="text-4xl font-bold text-primary-600">
-                        ${{ number_format($booking->seat->flightSeatPrices->where('flight_call', $booking->flight_call)->first()->price_usd, 0) }}
+            <div class="mb-8 border-b border-gray-100 pb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Total Amount</h3>
+                        <div class="text-4xl font-bold text-primary-600">
+                            ${{ number_format($booking->total_price ?? ($booking->seat->flightSeatPrices->where('flight_call', $booking->flight_call)->first()->price_usd * 1.11 + 1), 2) }}
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="badge-info text-xs px-3 py-1">Order #{{ $booking->confirmation_code }}</span>
                     </div>
                 </div>
-                <div class="text-right">
-                    <span class="badge-info text-xs px-3 py-1">Order #{{ $booking->confirmation_code }}</span>
+
+                @php
+                    $total = $booking->total_price ?? ($booking->seat->flightSeatPrices->where('flight_call', $booking->flight_call)->first()->price_usd * 1.11 + 1);
+                    $price = $booking->seat->flightSeatPrices->where('flight_call', $booking->flight_call)->first()->price_usd;
+
+                    // Recalculate if not stored (Legacy support)
+                    if ($booking->tax_amount !== null) {
+                        $vat = $booking->tax_amount;
+                        // Infer rate for label
+                        $rate = ($price > 0) ? round($vat / $price, 2) : 0;
+                    } else {
+                        // Advanced Calculation Fallback
+                        $originCountry = $booking->flight->schedule->originAirport->iata_country_code;
+                        $destCountry = $booking->flight->schedule->destinationAirport->iata_country_code;
+                        $flightDate = $booking->flight->schedule->departure_time_gmt;
+
+                        $isDomestic = ($originCountry == 'ID' && $destCountry == 'ID');
+                        $isInternational = !$isDomestic;
+                        $isDtpPeriod = \Carbon\Carbon::parse($flightDate)->between('2025-10-22', '2026-01-10');
+
+                        $rate = 0.11;
+                        if ($isInternational)
+                            $rate = 0;
+                        elseif ($isDtpPeriod)
+                            $rate = 0.05;
+
+                        $vat = $price * $rate;
+                    }
+
+                    $basePrice = $price;
+                    $vatLabel = "VAT (" . ($rate * 100) . "%)";
+                    if ($rate == 0 && $booking->tax_amount !== null)
+                        $vatLabel = "VAT (Intl. 0%)";
+                    elseif ($rate == 0.05)
+                        $vatLabel = "VAT (DTP 5%)";
+                @endphp
+
+                <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>Base Fare</span>
+                        <span class="font-medium">${{ number_format($basePrice, 2) }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>{{ $vatLabel }}</span>
+                        <span class="font-medium">${{ number_format($vat, 2) }}</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>App Admin Fee</span>
+                        <span class="font-medium">$1.00</span>
+                    </div>
                 </div>
             </div>
 

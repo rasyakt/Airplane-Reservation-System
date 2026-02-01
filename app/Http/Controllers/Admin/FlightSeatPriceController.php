@@ -12,13 +12,13 @@ class FlightSeatPriceController extends Controller
 {
     public function index()
     {
-        $flights = Flight::with(['schedule.originAirport', 'schedule.destinationAirport'])->latest()->paginate(15);
+        $flights = Flight::with(['schedule.originAirport', 'schedule.destinationAirport', 'aircraftInstances.aircraft'])->latest()->paginate(15);
         return view('admin.prices.index', compact('flights'));
     }
 
     public function edit($flightCall)
     {
-        $flight = Flight::with(['schedule.originAirport', 'schedule.destinationAirport', 'aircraft.seats'])->where('flight_call', $flightCall)->firstOrFail();
+        $flight = Flight::with(['schedule.originAirport', 'schedule.destinationAirport', 'aircraftInstances.aircraft.seats'])->where('flight_call', $flightCall)->firstOrFail();
         $travelClasses = TravelClass::all();
 
         // Get existing prices for this flight
@@ -29,8 +29,14 @@ class FlightSeatPriceController extends Controller
 
     public function update(Request $request, $flightCall)
     {
-        $flight = Flight::where('flight_call', $flightCall)->firstOrFail();
-        $aircraftId = $flight->aircraft->aircraft_id;
+        $flight = Flight::with('aircraftInstances.aircraft')->where('flight_call', $flightCall)->firstOrFail();
+        $aircraft = $flight->aircraftInstances->first()?->aircraft;
+
+        if (!$aircraft) {
+            return back()->with('error', 'No aircraft assigned to this flight. Please assign an aircraft instance first.');
+        }
+
+        $aircraftId = $aircraft->aircraft_id;
 
         $prices = $request->input('prices', []); // [class_id => price]
 

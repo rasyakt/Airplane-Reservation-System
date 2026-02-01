@@ -87,14 +87,14 @@
                         <div class="text-xs font-semibold text-gray-400 uppercase">System</div>
                     </div>
 
-                    <a href="#"
-                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-lg transition">
+                    <a href="{{ route('admin.users.index') }}"
+                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-lg transition {{ request()->routeIs('admin.users.*') ? 'bg-primary-50 text-primary-600 font-semibold' : '' }}">
                         <i class="fas fa-users w-5"></i>
                         <span>Users</span>
                     </a>
 
-                    <a href="#"
-                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-lg transition">
+                    <a href="{{ route('profile.edit') }}"
+                        class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-primary-50 hover:text-primary-600 rounded-lg transition {{ request()->routeIs('profile.edit') ? 'bg-primary-50 text-primary-600 font-semibold' : '' }}">
                         <i class="fas fa-cog w-5"></i>
                         <span>Settings</span>
                     </a>

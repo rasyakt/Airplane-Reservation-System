@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
         Route::get('prices/{flight}/edit', [FlightSeatPriceController::class, 'edit'])->name('prices.edit');
         Route::put('prices/{flight}', [FlightSeatPriceController::class, 'update'])->name('prices.update');
         Route::resource('bookings', \App\Http\Controllers\Admin\AdminBookingController::class)->only(['index', 'show', 'destroy']);
+        Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['show']);
     });
 });
 

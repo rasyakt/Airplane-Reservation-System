@@ -5,71 +5,86 @@
 @section('content')
     <div class="flex justify-between items-center mb-6">
         <div>
-            <p class="text-gray-600 mt-1">Monitor and manage all flights</p>
+            <h2 class="text-2xl font-bold text-gray-900">Active Flights</h2>
+            <p class="text-sm text-gray-500 mt-1">Monitor and manage all scheduled aircraft operations.</p>
         </div>
         <a href="{{ route('admin.flights.create') }}" class="btn-primary">
-            <i class="fas fa-plus-circle"></i>Add Flight
+            <i class="fas fa-plus mr-2"></i>Add Flight
         </a>
     </div>
 
-    <div class="card">
+    <div class="card overflow-hidden">
         <div class="table">
             <table class="w-full">
                 <thead>
                     <tr>
                         <th>Flight #</th>
                         <th>Route</th>
-                        <th>Departure</th>
+                        <th>Schedule Ref</th>
                         <th>Status</th>
+                        <th>Bookings</th>
                         <th class="text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($flights as $flight)
                         <tr>
-                            <td><span class="font-bold text-primary-600">{{ $flight->flight_call }}</span></td>
+                            <td>
+                                <span class="font-bold text-gray-900 tracking-wider">{{ $flight->flight_call }}</span>
+                            </td>
                             <td>
                                 <div class="flex items-center gap-2">
-                                    <span class="font-semibold">{{ $flight->schedule->originAirport->iata_airport_code }}</span>
-                                    <i class="fas fa-arrow-right text-gray-400"></i>
-                                    <span
-                                        class="font-semibold">{{ $flight->schedule->destinationAirport->iata_airport_code }}</span>
+                                    <span class="badge-primary">{{ $flight->schedule->origin_iata_airport_code }}</span>
+                                    <i class="fas fa-arrow-right text-gray-300"></i>
+                                    <span class="badge-secondary">{{ $flight->schedule->destination_iata_airport_code }}</span>
                                 </div>
                             </td>
-                            <td>{{ date('M j, Y - H:i', strtotime($flight->schedule->departure_time_gmt)) }}</td>
+                            <td>
+                                <div class="text-xs font-semibold text-gray-700">{{ $flight->schedule->callsign }}</div>
+                                <div class="text-[10px] text-gray-400 mt-0.5 uppercase">
+                                    {{ $flight->schedule->departure_time_gmt->format('D, d M H:i') }} GMT</div>
+                            </td>
                             <td>
                                 @if ($flight->status->name == 'Scheduled')
-                                    <span class="badge-success"><i
-                                            class="fas fa-check-circle mr-1"></i>{{ $flight->status->name }}</span>
+                                    <span class="badge-success">{{ $flight->status->name }}</span>
                                 @elseif ($flight->status->name == 'Cancelled')
-                                    <span class="badge-danger"><i
-                                            class="fas fa-times-circle mr-1"></i>{{ $flight->status->name }}</span>
+                                    <span class="badge-danger">{{ $flight->status->name }}</span>
                                 @else
-                                    <span class="badge-warning"><i class="fas fa-clock mr-1"></i>{{ $flight->status->name }}</span>
+                                    <span class="badge-warning">{{ $flight->status->name }}</span>
                                 @endif
                             </td>
-                            <td class="text-right">
+                            <td>
+                                <div class="text-sm font-bold text-primary-600">{{ $flight->bookings->count() }}</div>
+                            </td>
+                            <td>
                                 <div class="flex justify-end gap-2">
+                                    <a href="{{ route('admin.flights.show', $flight->flight_call) }}"
+                                        class="p-2 text-gray-400 hover:text-primary-600 transition" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
                                     <a href="{{ route('admin.flights.edit', $flight->flight_call) }}"
-                                        class="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition text-sm font-medium"><i
-                                            class="fas fa-edit mr-1"></i>Edit</a>
+                                        class="p-2 text-gray-400 hover:text-secondary-600 transition" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
                                     <form action="{{ route('admin.flights.destroy', $flight->flight_call) }}" method="POST"
-                                        class="inline">
+                                        class="inline" onsubmit="return confirm('Delete this flight?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit"
-                                            class="px-3 py-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition text-sm font-medium"
-                                            onclick="return confirm('Delete this flight?')"><i
-                                                class="fas fa-trash mr-1"></i>Delete</button>
+                                        <button type="submit" class="p-2 text-gray-400 hover:text-red-600 transition"
+                                            title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center py-12"><i
-                                    class="fas fa-plane-slash text-5xl text-gray-300 mb-3"></i>
-                                <p class="text-gray-500">No flights found.</p>
+                            <td colspan="6" class="text-center py-12">
+                                <div class="flex flex-col items-center">
+                                    <i class="fas fa-plane-slash text-4xl text-gray-200 mb-4"></i>
+                                    <p class="text-gray-500">No flights found. Scheduled flights will appear here.</p>
+                                </div>
                             </td>
                         </tr>
                     @endforelse
@@ -78,7 +93,7 @@
         </div>
     </div>
 
-    <div class="mt-4">
+    <div class="mt-6">
         {{ $flights->links() }}
     </div>
 @endsection

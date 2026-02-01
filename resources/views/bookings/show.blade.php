@@ -180,6 +180,14 @@
                                     <span>Base Price</span>
                                     <span>$<span id="basePrice">0</span></span>
                                 </div>
+                                <div class="flex justify-between text-gray-600 mb-2">
+                                    <span id="vatLabel">VAT (11%)</span>
+                                    <span>$<span id="vatPrice">0</span></span>
+                                </div>
+                                <div class="flex justify-between text-gray-600 mb-2">
+                                    <span>Admin Fee</span>
+                                    <span>$1.00</span>
+                                </div>
                                 <div class="flex justify-between font-bold text-xl text-gray-900 pt-4 border-t-2 border-gray-200">
                                     <span>Total</span>
                                     <span class="text-primary-600">$<span id="totalPrice">0</span></span>
@@ -204,10 +212,39 @@
             document.getElementById('selectedSeatInfo').classList.remove('hidden');
             document.getElementById('priceInfo').classList.remove('hidden');
             
+            // Tax Logic
+            const originCountry = '{{ $flight->schedule->originAirport->iata_country_code }}';
+            const destCountry = '{{ $flight->schedule->destinationAirport->iata_country_code }}';
+            const flightDate = new Date('{{ $flight->schedule->departure_time_gmt }}');
+            
+            const dtpStart = new Date('2025-10-22');
+            const dtpEnd = new Date('2026-01-10');
+            
+            let taxRate = 0.11; // Default Domestic
+            let taxLabel = 'VAT (11%)';
+
+            const isDomestic = (originCountry === 'ID' && destCountry === 'ID');
+            const isInternational = !isDomestic;
+            const isDtpPeriod = (flightDate >= dtpStart && flightDate <= dtpEnd);
+
+            if (isInternational) {
+                taxRate = 0;
+                taxLabel = 'VAT (Intl. 0%)';
+            } else if (isDtpPeriod) {
+                taxRate = 0.05;
+                taxLabel = 'VAT (DTP 5%)';
+            }
+
+            var vat = price * taxRate;
+            var adminFee = 1.00;
+            var total = price + vat + adminFee;
+
             document.getElementById('seatNumber').textContent = 'Seat #' + seatId;
             document.getElementById('seatClass').textContent = className;
             document.getElementById('basePrice').textContent = price.toFixed(2);
-            document.getElementById('totalPrice').textContent = price.toFixed(2);
+            document.getElementById('vatLabel').textContent = taxLabel;
+            document.getElementById('vatPrice').textContent = vat.toFixed(2);
+            document.getElementById('totalPrice').textContent = total.toFixed(2);
 
             // Store and redirect
             sessionStorage.setItem('selectedSeat', JSON.stringify({

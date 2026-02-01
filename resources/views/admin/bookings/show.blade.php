@@ -35,7 +35,8 @@
                         <div>
                             <h3 class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-4">Departure</h3>
                             <div class="text-2xl font-bold text-gray-900">
-                                {{ $booking->flight->schedule->originAirport->city }}</div>
+                                {{ $booking->flight->schedule->originAirport->city }}
+                            </div>
                             <div class="text-gray-600 mb-2">{{ $booking->flight->schedule->originAirport->name }}</div>
                             <div class="text-primary-600 font-semibold">
                                 {{ date('F j, Y - H:i', strtotime($booking->flight->schedule->departure_time_gmt)) }} GMT
@@ -44,7 +45,8 @@
                         <div>
                             <h3 class="text-gray-500 text-sm font-semibold uppercase tracking-wider mb-4">Arrival</h3>
                             <div class="text-2xl font-bold text-gray-900">
-                                {{ $booking->flight->schedule->destinationAirport->city }}</div>
+                                {{ $booking->flight->schedule->destinationAirport->city }}
+                            </div>
                             <div class="text-gray-600 mb-2">{{ $booking->flight->schedule->destinationAirport->name }}</div>
                             <div class="text-primary-600 font-semibold">
                                 {{ date('F j, Y - H:i', strtotime($booking->flight->schedule->arrival_time_gmt)) }} GMT
@@ -115,6 +117,66 @@
                                 <span class="text-gray-500">Booking Date</span>
                                 <span class="text-sm text-gray-900">{{ $booking->created_at->format('M j, Y H:i') }}</span>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-file-invoice-dollar text-primary-500 mr-2"></i>Financials
+                </div>
+                <div class="card-body">
+                    @php
+                        $total = $booking->total_price ?? ($booking->seat->flightSeatPrices->where('flight_call', $booking->flight_call)->first()->price_usd * 1.11 + 1);
+                        $price = $booking->seat->flightSeatPrices->where('flight_call', $booking->flight_call)->first()->price_usd;
+
+                        // Recalculate if not stored (Legacy support)
+                        if ($booking->tax_amount !== null) {
+                            $vat = $booking->tax_amount;
+                            $rate = ($price > 0) ? round($vat / $price, 2) : 0;
+                        } else {
+                            // Advanced Calculation Fallback
+                            $originCountry = $booking->flight->schedule->originAirport->iata_country_code;
+                            $destCountry = $booking->flight->schedule->destinationAirport->iata_country_code;
+                            $flightDate = $booking->flight->schedule->departure_time_gmt;
+
+                            $isDomestic = ($originCountry == 'ID' && $destCountry == 'ID');
+                            $isInternational = !$isDomestic;
+                            $isDtpPeriod = \Carbon\Carbon::parse($flightDate)->between('2025-10-22', '2026-01-10');
+
+                            $rate = 0.11;
+                            if ($isInternational)
+                                $rate = 0;
+                            elseif ($isDtpPeriod)
+                                $rate = 0.05;
+
+                            $vat = $price * $rate;
+                        }
+
+                        $basePrice = $price;
+                        $vatLabel = "VAT (" . ($rate * 100) . "%)";
+                        if ($rate == 0 && $booking->tax_amount !== null)
+                            $vatLabel = "VAT (Intl. 0%)";
+                        elseif ($rate == 0.05)
+                            $vatLabel = "VAT (DTP 5%)";
+                    @endphp
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span>Base Fare</span>
+                            <span class="font-medium">${{ number_format($basePrice, 2) }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span>{{ $vatLabel }}</span>
+                            <span class="font-medium">${{ number_format($vat, 2) }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span>Admin Fee</span>
+                            <span class="font-medium">$1.00</span>
+                        </div>
+                        <div class="pt-3 border-t border-gray-100 flex justify-between items-center">
+                            <span class="font-bold text-gray-900">Total Paid</span>
+                            <span class="font-bold text-primary-600">${{ number_format($total, 2) }}</span>
                         </div>
                     </div>
                 </div>
