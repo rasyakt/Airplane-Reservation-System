@@ -22,6 +22,8 @@ class Booking extends Model
         'seat_id',
         'confirmation_code',
         'payment_status',
+        'total_price',
+        'tax_amount',
     ];
 
     /**

@@ -169,7 +169,8 @@
                                             ${{ number_format($flight->min_price, 0) }}</div>
                                         <div class="text-xs text-gray-500">/person</div>
                                     </div>
-                                    <a href="{{ route('flights.show', $flight->flight_call) }}" class="btn-primary w-full">
+                                    <a href="{{ route('clients.create', ['flight_call' => $flight->flight_call]) }}"
+                                        class="btn-primary w-full">
                                         Select Flight
                                         <i class="fas fa-arrow-right"></i>
                                     </a>

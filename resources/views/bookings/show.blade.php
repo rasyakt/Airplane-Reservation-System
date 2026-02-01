@@ -31,31 +31,34 @@
                     <div class="flex items-center">
                         <div class="flex items-center">
                             <div
-                                class="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                <i class="fas fa-check"></i>
+                                class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                                <i class="fas fa-check text-xs"></i>
                             </div>
-                            <span class="ml-3 text-sm font-semibold text-gray-900">Select Flight</span>
+                            <span class="ml-2 text-sm font-semibold text-gray-900">Search</span>
                         </div>
-                        <div class="w-24 h-0.5 bg-primary-500 mx-4"></div>
+                        <div class="w-16 h-0.5 bg-primary-500 mx-4"></div>
                         <div class="flex items-center">
                             <div
-                                class="w-10 h-10 bg-primary-500 rounded-full flex items-center justify-center text-white font-semibold">
-                                2</div>
-                            <span class="ml-3 text-sm font-semibold text-primary-600">Choose Seat</span>
+                                class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                                <i class="fas fa-check text-xs"></i>
+                            </div>
+                            <span class="ml-2 text-sm font-semibold text-gray-900">Details</span>
                         </div>
-                        <div class="w-24 h-0.5 bg-gray-300 mx-4"></div>
+                        <div class="w-16 h-0.5 bg-primary-500 mx-4"></div>
                         <div class="flex items-center">
                             <div
-                                class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-semibold">
-                                3</div>
-                            <span class="ml-3 text-sm font-medium text-gray-500">Passenger Info</span>
+                                class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                                3
+                            </div>
+                            <span class="ml-2 text-sm font-semibold text-primary-600">Seats</span>
                         </div>
-                        <div class="w-24 h-0.5 bg-gray-300 mx-4"></div>
+                        <div class="w-16 h-0.5 bg-gray-300 mx-4"></div>
                         <div class="flex items-center">
                             <div
-                                class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-semibold">
-                                4</div>
-                            <span class="ml-3 text-sm font-medium text-gray-500">Confirmation</span>
+                                class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 text-sm font-semibold">
+                                4
+                            </div>
+                            <span class="ml-2 text-sm font-medium text-gray-500">Pay</span>
                         </div>
                     </div>
                 </div>
@@ -244,6 +247,23 @@
                                 <i class="fas fa-hand-pointer text-4xl mb-3"></i>
                                 <p class="text-sm">Select a seat to continue</p>
                             </div>
+
+                            <!-- Action Button -->
+                            <form action="{{ route('bookings.confirm') }}" method="POST" id="bookingForm"
+                                class="hidden">
+                                @csrf
+                                <input type="hidden" name="flight_call" value="{{ $flight->flight_call }}">
+                                <input type="hidden" name="client_id" value="{{ session('booking_client_id') }}">
+                                <input type="hidden" name="aircraft_id" id="formAircraftId"
+                                    value="{{ $flight->flightSeatPrices->first()->aircraft_id ?? 0 }}">
+                                <input type="hidden" name="seat_id" id="formSeatId">
+
+                                <button type="submit"
+                                    class="btn-primary w-full shadow-lg text-lg py-4 mt-4 transform hover:-translate-y-0.5 transition-all">
+                                    Continue to Payment
+                                    <i class="fas fa-credit-card ml-2"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -267,10 +287,12 @@
             document.getElementById('noSelection').classList.add('hidden');
             document.getElementById('selectedSeatInfo').classList.remove('hidden');
             document.getElementById('priceInfo').classList.remove('hidden');
+            document.getElementById('bookingForm').classList.remove('hidden'); // Show submit button
 
             // Tax Logic
-            const originCountry = '{{ $flight->schedule->originAirport->iata_country_code }}';
-            const destCountry = '{{ $flight->schedule->destinationAirport->iata_country_code }}';
+            // Use trim() to avoid whitespace issues from database or blade output
+            const originCountry = '{{ $flight->schedule->originAirport->iata_country_code }}'.trim();
+            const destCountry = '{{ $flight->schedule->destinationAirport->iata_country_code }}'.trim();
             const flightDate = new Date('{{ $flight->schedule->departure_time_gmt }}');
 
             const dtpStart = new Date('2025-10-22');
@@ -280,9 +302,10 @@
             let taxLabel = 'VAT (11%)';
 
             const isDomestic = (originCountry === 'ID' && destCountry === 'ID');
-            const isInternational = !isDomestic;
-            const isDtpPeriod = (flightDate >= dtpStart && flightDate <= dtpEnd);
+            // Explicit check: International is when countries are DIFFERENT
+            const isInternational = (originCountry !== destCountry); 
 
+            // Priority: International (0%) > DTP (5%) > Domestic (11%)
             if (isInternational) {
                 taxRate = 0;
                 taxLabel = 'VAT (Intl. 0%)';
@@ -302,18 +325,10 @@
             document.getElementById('vatPrice').textContent = vat.toFixed(2);
             document.getElementById('totalPrice').textContent = total.toFixed(2);
 
-            // Store and redirect
-            sessionStorage.setItem('selectedSeat', JSON.stringify({
-                flight_call: '{{ $flight->flight_call }}',
-                seat_id: seatId,
-                aircraft_id: {{ $flight->flightSeatPrices->first()->aircraft_id ?? 0 }},
-                price: price,
-                class: className
-            }));
-
-            setTimeout(() => {
-                window.location.href = '{{ route("clients.create") }}';
-            }, 800);
+            // Update Hidden Form
+            document.getElementById('formSeatId').value = seatId;
+            // Aircraft ID is static per flight usually, checking if row click passed it? 
+            // The logic assumes one aircraft per flight for now.
         }
     </script>
 </body>

@@ -23,6 +23,7 @@ Route::get('/bookings/confirmation/{confirmationCode}', [BookingController::clas
 
 // Client registration routes
 Route::get('/clients/create', [ClientController::class, 'create'])->name('clients.create');
+Route::post('/clients/store', [ClientController::class, 'storePassenger'])->name('clients.store');
 Route::post('/clients', [ClientController::class, 'register'])->name('clients.register');
 Route::post('/clients/check-email', [ClientController::class, 'checkEmail'])->name('clients.check-email');
 

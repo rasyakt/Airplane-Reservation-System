@@ -60,6 +60,11 @@ class BookingController extends Controller
      */
     public function show(Flight $flight)
     {
+        // Enforce Flow: Must have passenger data
+        if (!session()->has('booking_client_id')) {
+            return redirect()->route('clients.create', ['flight_call' => $flight->flight_call]);
+        }
+
         $flight->load([
             'schedule.originAirport',
             'schedule.destinationAirport',
@@ -141,16 +146,17 @@ class BookingController extends Controller
                     ->where('flight_call', $validated['flight_call'])
                     ->firstOrFail();
 
-                $originCountry = $flight->schedule->originAirport->iata_country_code;
-                $destCountry = $flight->schedule->destinationAirport->iata_country_code;
+                $originCountry = trim($flight->schedule->originAirport->iata_country_code);
+                $destCountry = trim($flight->schedule->destinationAirport->iata_country_code);
 
                 $isDomestic = ($originCountry == 'ID' && $destCountry == 'ID');
-                $isInternational = !$isDomestic;
+                // Explicitly check for International
+                $isInternational = ($originCountry !== $destCountry);
 
                 // Check DTP Period
                 $dtpStart = \Carbon\Carbon::create(2025, 10, 22);
                 $dtpEnd = \Carbon\Carbon::create(2026, 1, 10);
-                $flightDate = $flight->schedule->departure_time_gmt; // Assumed to be cast to Carbon in model, otherwise parse it
+                $flightDate = $flight->schedule->departure_time_gmt;
                 $isDtpPeriod = \Carbon\Carbon::parse($flightDate)->between($dtpStart, $dtpEnd);
 
                 $taxRate = 0.11; // Default Normal Domestic

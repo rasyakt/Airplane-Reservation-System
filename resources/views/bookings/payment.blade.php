@@ -49,12 +49,12 @@
                         $rate = ($price > 0) ? round($vat / $price, 2) : 0;
                     } else {
                         // Advanced Calculation Fallback
-                        $originCountry = $booking->flight->schedule->originAirport->iata_country_code;
-                        $destCountry = $booking->flight->schedule->destinationAirport->iata_country_code;
+                        $originCountry = trim($booking->flight->schedule->originAirport->iata_country_code);
+                        $destCountry = trim($booking->flight->schedule->destinationAirport->iata_country_code);
                         $flightDate = $booking->flight->schedule->departure_time_gmt;
 
                         $isDomestic = ($originCountry == 'ID' && $destCountry == 'ID');
-                        $isInternational = !$isDomestic;
+                        $isInternational = ($originCountry !== $destCountry);
                         $isDtpPeriod = \Carbon\Carbon::parse($flightDate)->between('2025-10-22', '2026-01-10');
 
                         $rate = 0.11;
