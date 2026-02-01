@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::get('/', [BookingController::class, 'index'])->name('home');
+Route::get('/p/{slug}', [\App\Http\Controllers\PageController::class, 'show'])->name('pages.show');
 Route::get('/flights/search', [BookingController::class, 'search'])->name('flights.search');
 Route::get('/flights/{flight}', [BookingController::class, 'show'])->name('flights.show');
 // Booking routes
